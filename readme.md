@@ -1,4 +1,6 @@
 # yc-task-manager
+[![Travis](https://img.shields.io/travis/rust-lang/rust.svg)]()
+[![Github All Releases](https://img.shields.io/github/downloads/lyc923/yc-task-manager/total.svg)]()
 
 能够简单地在游览器中或者node中去处理复杂的异步任务,
 

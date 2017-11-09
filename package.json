@@ -1,11 +1,20 @@
 {
-  "name": "async-task-manager",
+  "name": "yc-task-manager",
   "version": "0.0.1",
-  "description": "任务管理器",
+  "description": "a simple manager to handle some complex tasks",
   "main": "src/index.js",
   "directories": {
+    "doc": "docs",
     "test": "test"
   },
+  "keyword": [
+    "task",
+    "async",
+    "manager",
+    "task-manager",
+    "yc-task-manager",
+    "yc"
+  ],
   "scripts": {
     "test": "mocha-webpack --opts mocha-webpack.opts"
   },
@@ -13,11 +22,6 @@
     "type": "git",
     "url": "dsad"
   },
-  "keywords": [
-    "task",
-    "taskManager",
-    "asyncTask"
-  ],
   "author": "YuChenLi <liyc_code@163.com>",
   "license": "MIT",
   "devDependencies": {
@@ -45,5 +49,9 @@
   },
   "dependencies": {
     "lodash.isplainobject": "^4.0.6"
+  },
+  "bugs": {
+    "url": "https://github.com/YuChenLi923/yc-task-manager/issues",
+    "email": "liyc_code@163.com"
   }
 }

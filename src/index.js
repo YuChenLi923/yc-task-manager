@@ -3,7 +3,8 @@
  *
  * @author      YuChenLi923<liyc_code@163.com>
  */
-const isPlainObject = require('lodash.isplainobject');
+const isPlainObject = require('lodash.isplainobject'),
+      assgin = require('./utils/yc-assign');
 function createTaskList(tasks) {
   let result = [];
   if (Array.isArray(tasks)) {
@@ -70,15 +71,13 @@ Object.assign(Task.prototype, {
 
 function TaskManager() {
   if (this instanceof TaskManager) {
-    this.Init(...arguments);
+    this.init(...arguments);
   } else {
     return new TaskManager(...arguments);
   }
 }
-TaskManager.prototype = {
-  constructor: TaskManager,
-  finish: Task.prototype.finish,
-  Init() {
+assgin(TaskManager.prototype, {
+  init() {
     let args = [...arguments],
         len = args.length,
         options = args[len - 1],
@@ -140,5 +139,6 @@ TaskManager.prototype = {
     this.errHandler = errHandler;
     return this;
   }
-};
+});
+
 module.exports = TaskManager;
