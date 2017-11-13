@@ -19,7 +19,9 @@ const b = function () {
     }, 500);
 };
 // 创建一个任务管理器并分配任务
-const myTasker = tasker(a, b);
+const myTasker = tasker(a, b).to((aResult, bResult) => {
+  console.log(aResult + bResult);
+});
 
 // 运行任务
 myTasker.run();
@@ -34,12 +36,20 @@ tasker是一个构造函数,你可以通过new来创建一个任务管理对象,
 
 - [...tasks]
 
-task必须是可执行的函数
+  task必须是可执行的函数列表,它代表一个任务队列
 
+- options
 
-### tasker.to([...tasks])
-
+ 这个任务队列的配置选项
+ - mode 此任务队列执行的模式,可选:'normal', 'compete'
+    - normal 普通模式,默认 只有当所以任务执行完毕后才能执行下一个任务队列
+    - compete 竞争模式, 任务队列中一旦有一个任务完成，那么就执行下一个任务队列
+### tasker.to([...tasks][,options])
 将传入的所以任务推入下一个执行的任务队列
+
+- options
+ 这个任务队列的配置选项
+
 
 ### tasker.run()
 运行tasker
@@ -55,7 +65,7 @@ task必须是可执行的函数
 ### tasker.continue()
 继续当前的tasker的运行
 
-### tasker.disable
+### tasker.disable()
 禁止tasker的运行,禁止之后将无法通过continue()继续执行之后的任务
 
 
@@ -63,27 +73,34 @@ task必须是可执行的函数
 
 当我们将函数添加到tasker时,函数将会被包装成一个task,但这个函数执行时，会向其传入上一个任务队列执行的结果(如果存在的话)以及该task的操作对象opera,如果传入的函数是一个非箭头函数的话，在包装成task之后，它的this会指向这个task，所以你可以向上面个的例子直接调用this.finish()触发这个任务已经完成。但是有时候如果是箭头函数,由于箭头函数本身没有this,所以只能通过opera操作对象来触发任务完成等事件。
 - results
-results对于上一个任务队列的执行结果列表，注意它是一一对应，就如刚开始举的栗子那样。
+
+ results对于上一个任务队列的执行结果列表，注意它是一一对应，就如刚开始举的栗子那样。
 - opera
-操作对象
- - end 对应task.end
- - finish 对应task.finish
- - err 对应task.err
+
+ 操作对象
+ - end
+  对应task.end
+ - finish
+  对应task.finish
+ - err
+  对应task.err
 
 ### task.finish([result])
-表示这个任务已经完成了,如果当前对象的所以任务都执行完毕，则会执行下一个任务队列。
+表示这个任务已经完成了,然后会根据所在任务队列的执行模式选择如何去执行下一个任务队列。
 - result
-该任务的执行完的结果，结果可以为任意合法的数据类型，它将会和跟它处于同一个任务队列的其他任务一起将结果传入下一个将执行的任务队列。
+
+ 该任务的执行完的结果，结果可以为任意合法的数据类型，它将会和跟它处于同一个任务队列的其他任务一起将结果传入下一个将执行的任务队列。
 
 ### task.end([result])
-表示这个任务已经完成了,与finish不同的是,一旦调用end,那么就会立即将result传入最后一个将执行的任务队列,并且会跳过后面的任务队列,直接执行最后一个任务队列。
+表示这个任务已经完成了,与finish不同的是,end不会受到mode的影响,一旦调用end,那么就会立即将result传入最后一个将执行的任务队列,并且会跳过后面的任务队列,直接执行最后一个任务队列。
 - result
-该任务的执行完的结果，结果可以为任意合法的数据类型，它将会将结果传入最后一个将执行的任务队列。
+
+ 该任务的执行完的结果，结果可以为任意合法的数据类型，它将会将结果传入最后一个将执行的任务队列。
 
 ### task.err([err])
 表示这个任务在执行过程中发送错误，因此会立即禁止该tasker的执行, 在执行同步任务中不需要调用err(),会自动捕捉到错误并交给我们定义的错误处理函数处理。
 
-## 嵌套tasker
+## 嵌套
 tasker可以相互嵌套，这意味着不仅仅可以处理简单的线形任务流程，还可以处理类似图的流程。
 
 ```
@@ -112,8 +129,33 @@ const Bb = function() {
 const A = tasker(Aa, Ab);
 const B = tasker(Ba, Bb);
 tasker(A, B).run((a, b) => {
-    console.log(a + b);
+    console.log(a, b);// [1, 2], [3, 4]
 });
 ```
 
+tasker也可以与任务函数嵌套在一起
 
+```
+const tasker = require('yc-task-manager');
+const Aa = function() {
+   setTimeout(() => {
+    this.finish(1);
+   }, 1000);
+}
+const Ab = function() {
+   setTimeout(() => {
+    this.finish(2);
+   }, 500);
+}
+const A = tasker(Aa, Ab).to(function(AaResult, AbResult){
+    this.finish(AaResult + AbResult);
+});
+const B = function() {
+    setTimeout(()=> {
+        this.finish(3);
+    }, 200);
+};
+tasker(A, B).to((AResult, BResult) => {
+  console.log(AResult + BResult); // 3 + 3 = 6
+});
+```

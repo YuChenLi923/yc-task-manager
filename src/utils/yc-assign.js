@@ -1,4 +1,4 @@
-import isPlainObject from './yc-is-plain-object';
+const isPlainObject = require('lodash.isplainobject');
 function assign(...args) {
   let target = args.shift(),
       sourceObjs = args,
@@ -33,4 +33,4 @@ function assign(...args) {
   }
   return target;
 }
-module.exports =  assign;
+module.exports = assign;
