@@ -50,6 +50,31 @@ tasker是一个构造函数,你可以通过new来创建一个任务管理对象,
 - options
  这个任务队列的配置选项
 
+### tasker.set([option])
+
+设置这个tasker的全局配置,如果正在执行的任务队列没有指定的options则,则这个任务队列的配置就是全局的配置,跟任务队列的options不同的是，这里还可以配置整个任务的超时时间。
+
+- timeout <string> 规定超时的时间(ms),如果超时将会触发timeout事件(如果绑定了timeout事件的话)
+
+### tasker.on(event, cb)
+
+- event <string> 事件类型,既可以绑定自定义类型,也可以绑定yc-task-manager指定的一些事件类型
+  - err 当发生错误的时候,会触发这个事件
+  - timeout 当任务超时时会触发,触发后会立刻终止整个任务的执行!
+
+- cb <function> 事件触发后的回调函数
+
+### tasker.emit(event)
+
+触发绑定在该tasker身上指定的event事件
+
+### tasker.removeListener(event, cb)
+
+移除指定事件的指定的绑定函数
+
+### tasker.removeAllListener(event)
+
+移除指定事件所有的绑定的回调函数
 
 ### tasker.run()
 运行tasker

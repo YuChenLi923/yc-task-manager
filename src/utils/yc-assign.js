@@ -19,7 +19,7 @@ function assign(...args) {
     source = sourceObjs[i];
     for (key in source) {
       if ((deep === true || (typeof deep === 'function' && deep(key, source[key]))) && typeof source[key] === 'object' &&
-        Object.prototype.toString.call(source[key]) !== '[object RegExp]') {
+        Object.prototype.toString.call(source[key]) !== '[object RegExp]' && source[key] !== null) {
         if (Array.isArray(source[key])) {
           clone = target[key] && Array.isArray(target[key]) ? target[key] : [];
         } else {

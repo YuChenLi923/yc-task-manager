@@ -1,4 +1,5 @@
-import tasker from 'async-task-manager';
+const assert  = require('assert'),
+      tasker = require('async-task-manager');
 describe('同步异常处理', function () {
   it('异常流,', (done) => {
     const a11 = function () {
@@ -34,10 +35,27 @@ describe('同步异常处理', function () {
       console.log('计算的结果是' + result);
     }).catch((err) => {
       if (err) {
-        console.log('捕捉到错误!');
+        console.log('catch捕捉到错误!');
       }
       done();
     }).run();
+  });
+  it('通过监听器捕捉错误', (done) => {
+      const a12 = function () {
+        this.finish(2);
+      };
+      const b12 = function (a) {
+        throw new Error();
+        this.finish(3 + a);
+      };
+      const myTask = tasker(a12).to(b12).to((result) => {
+        console.log('计算的结果是' + result);
+      });
+      myTask.on('err', () => {
+        console.log('监听器捕捉到错误!');
+        done();
+      });
+      myTask.run();
   });
 });
 describe('异步任务流程', function () {
@@ -49,11 +67,16 @@ describe('异步任务流程', function () {
     };
     const b21 = function (a) {
       setTimeout(() => {
-        console.log(3 + a);
-        done();
+        this.finish(3 + a);
       }, 2000);
     };
-    tasker(a21).to(b21).run();
+    tasker(a21).to(b21).to((result) => {
+      console.log(result);
+      assert.equal(result, 6 , 'the result is not 6');
+      done();
+    }).catch((e) => {
+      console.log(e);
+    }).run();
   });
   it('复杂的图结构', (done) => {
     const Aa = function () {
@@ -156,9 +179,60 @@ describe('模式测试', function () {
     }).to((who, opera) => {
       console.log('经过中间任务');
       opera.finish(who);
-      done();
     }).to((who)=> {
+      done();
       console.log(who + '率先完成');
     }).run();
+  });
+});
+describe('超时处理', function () {
+  it('任务超时', (done) => {
+    const a = function () {
+      setTimeout(() => {
+        this.finish();
+      }, 2000);
+    };
+    const b = function () {
+      setTimeout(() => {
+        this.finish();
+      }, 20);
+    };
+    const myTask = tasker(a, b).to((who) => {
+      console.log('任务完成');
+      done();
+    });
+    myTask.set({
+      timeout: 100
+    });
+    myTask.on('timeout', () => {
+      done();
+      console.log('任务超时，任务执行失败!');
+    });
+    myTask.run();
+  });
+  it('任务超时 - 取消任务超时监听', (done) => {
+    const a = function () {
+      setTimeout(() => {
+        this.finish();
+      }, 2000);
+    };
+    const b = function () {
+      setTimeout(() => {
+        myTask.removeAllListeners('timeout');
+        this.finish();
+      }, 200);
+    };
+    const myTask = tasker(a, b).to(() => {
+      console.log('任务完成');
+      done();
+    });
+    myTask.set({
+      timeout: 1000
+    });
+    myTask.on('timeout', () => {
+      done();
+      console.log('任务超时，任务执行失败!');
+    });
+    myTask.run();
   });
 });

@@ -8,13 +8,20 @@ const isPlainObject = require('lodash.isplainobject'),
       taskerConfig = {
         waitList: [],
         dataList: [],
+        eventListeners: {},
         finishNum: 0,
         firedNum: 0,
+        running: false,
         cacheData: [],
-        belong: null
+        belong: null,
+        config: {
+          mode: 'normal',
+          timeout: 0
+        }
       };
 function createTaskList(tasks, options) {
-  let result = [];
+  let result = [],
+      config = this.config;
   if (Array.isArray(tasks)) {
     tasks.forEach((task) => {
       if (typeof task === 'function') {
@@ -28,7 +35,7 @@ function createTaskList(tasks, options) {
         task.list = result;
       }
     });
-    result.mode = options.mode;
+    result.mode = options.mode || config.mode;
     result.finished = false;
   }
   return result;
@@ -51,9 +58,9 @@ assgin(Task.prototype, {
       });
     } catch (err) {
       if (!this.fired) {
-        if (typeof belong.errHandler === 'function') {
+        if (belong.eventListeners['err']) {
           belong.disable();
-          belong.errHandler(err);
+          belong.emit('err', err);
         } else {
           this.finish(err);
         }
@@ -93,6 +100,10 @@ assgin(Task.prototype, {
       belong.run(...arguments);
       this.list.finished = true;
     }
+  },
+  err(err) {
+    let belong = this.belong;
+    belong.emit('err', err);
   }
 });
 
@@ -106,6 +117,7 @@ function TaskManager() {
 assgin(TaskManager.prototype, {
   finish: Task.prototype.finish,
   init() {
+    assgin(this, taskerConfig, true);
     this.to(...arguments);
   },
   to() {
@@ -124,12 +136,48 @@ assgin(TaskManager.prototype, {
     } else {
       this.taskList = tasks;
       this.taskLen = len;
-      assgin(this, taskerConfig, true);
       this.waitList = [];
     }
     return this;
   },
+  on(event, cb) {
+    !this.eventListeners[event] && (this.eventListeners[event] = []);
+    typeof cb === 'function' && (this.eventListeners[event].push(cb));
+  },
+  emit() {
+    const args = [...arguments],
+          event = args.shift();
+    if (this.eventListeners[event]) {
+      this.eventListeners[event].forEach((cb) => {
+        cb(...args);
+      });
+    }
+  },
+  removeListener(event, cb) {
+    if (this.eventListeners[event]) {
+      let index = this.eventListeners[event].indexOf(cb);
+      if (index > -1) {
+        this.eventListeners[event].splice(index, 1);
+      }
+    }
+  },
+  removeAllListeners(event) {
+    delete this.eventListeners[event];
+  },
   run() {
+    const { timeout } = this.config;
+    if (!this.running) {
+      this.startTime = +new Date();
+      this.running = true;
+      if (timeout) {
+        this.timer = setTimeout(() => {
+          if (this.eventListeners['timeout']) {
+            this.emit('timeout');
+            this.disable();
+          }
+        }, timeout);
+      }
+    }
     if (this.finishNum === this.taskLen) {
       this.taskList = this.waitList.shift();
       this.finishNum = 0;
@@ -143,9 +191,16 @@ assgin(TaskManager.prototype, {
         ++this.firedNum;
         task.run(...arguments);
       });
-    } else if (this.belong) {
-      this.finish(...this.cacheData);
+    } else {
+      this.endTime = +new Date();
+      clearTimeout(this.timer);
+      if (this.belong) {
+        this.finish(...this.cacheData);
+      }
     }
+  },
+  set(config) {
+    assgin(this.config, config, true);
   },
   stop() {
     this.firedNum !== this.taskLen && this.waitList.unshift(this.taskList.slice(this.firedNum - 1));
@@ -164,7 +219,7 @@ assgin(TaskManager.prototype, {
     this.disabled = true;
   },
   catch(errHandler) {
-    this.errHandler = errHandler;
+    this.on('err', errHandler);
     return this;
   }
 });

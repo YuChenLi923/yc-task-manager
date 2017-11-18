@@ -1,5 +1,12 @@
 # Changes
 
+
+## v0.1.0
+
+* Add global config
+* Add new option timeout
+* Add event listener
+
 ## v0.0.4
 
 * Add new mode: 'compete'

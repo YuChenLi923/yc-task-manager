@@ -1,13 +1,13 @@
 {
   "name": "yc-task-manager",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "a simple manager to handle some complex tasks",
   "main": "src/index.js",
   "directories": {
     "doc": "docs",
     "test": "test"
   },
-  "keyword": [
+  "keywords": [
     "task",
     "async",
     "manager",
