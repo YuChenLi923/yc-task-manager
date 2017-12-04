@@ -4,4 +4,4 @@ install:
 node_js:
   - "8.9.0"
 script:
-  - npm run test
+  - npm run coverage
