@@ -8,7 +8,7 @@ test/
 build/
 docs/
 .idea/
-
+.coveralls.yml
 .babelrc
 .eslintrc.js
 mocha-webpack.opts

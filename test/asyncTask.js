@@ -1,5 +1,5 @@
-const assert  = require('assert'),
-      tasker = require('async-task-manager');
+const assert = require('assert'),
+      tasker = require('../src/index');
 describe('同步异常处理', function () {
   it('异常流,', (done) => {
     const a11 = function () {
