@@ -1,6 +1,8 @@
 # yc-task-manager
-[![Travis](https://img.shields.io/travis/rust-lang/rust.svg)]()
-[![Github All Releases](https://img.shields.io/github/downloads/lyc923/yc-task-manager/total.svg)]()
+[![Build Status](https://travis-ci.org/YuChenLi923/yc-task-manager.svg?branch=master)](https://travis-ci.org/YuChenLi923/yc-task-manager)
+![NPM version](https://badge.fury.io/js/yc-task-manager.svg)
+![Downloads](http://img.shields.io/npm/dm/yc-task-manager.svg?style=flat)
+[![Coverage Status](https://coveralls.io/repos/github/YuChenLi923/yc-task-manager/badge.svg?branch=master)](https://coveralls.io/github/YuChenLi923/yc-task-manager?branch=master)
 
 能够简单地在游览器中或者node中去处理复杂的异步任务,
 

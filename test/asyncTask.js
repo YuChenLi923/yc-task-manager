@@ -58,7 +58,7 @@ describe('同步异常处理', function () {
       myTask.run();
   });
 });
-describe('异步任务流程', function () {
+  describe('异步任务流程', function () {
   it('简单线性结构', (done) => {
     const a21 = function () {
       setTimeout(() => {
@@ -72,7 +72,7 @@ describe('异步任务流程', function () {
     };
     tasker(a21).to(b21).to((result) => {
       console.log(result);
-      assert.equal(result, 6 , 'the result is not 6');
+            assert.equal(result, 6 , 'the result is not 6');
       done();
     }).catch((e) => {
       console.log(e);

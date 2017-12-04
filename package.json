@@ -1,6 +1,6 @@
 {
   "name": "yc-task-manager",
-  "version": "0.1.0",
+  "version": "0.1.0-b",
   "description": "a simple manager to handle some complex tasks",
   "main": "src/index.js",
   "directories": {
@@ -16,11 +16,12 @@
     "yc"
   ],
   "scripts": {
-    "test": "mocha-webpack --opts mocha-webpack.opts"
+    "test": "mocha-webpack --opts mocha-webpack.opts",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && gulp coveralls"
   },
   "repository": {
     "type": "git",
-    "url": "dsad"
+    "url": "https://github.com/YuChenLi923/yc-task-manager.git"
   },
   "author": "YuChenLi <liyc_code@163.com>",
   "license": "MIT",
@@ -38,7 +39,9 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "glob": "^7.1.2",
+    "gulp": "^3.9.1",
     "html-webpack-plugin": "^2.30.1",
+    "istanbul": "^0.4.5",
     "mocha": "^4.0.1",
     "mocha-webpack": "^1.0.1",
     "mochawesome": "^2.3.1",

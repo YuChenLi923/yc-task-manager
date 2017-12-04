@@ -5,7 +5,7 @@ module.exports = {
   externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   resolve: {
     alias: {
-      "async-task-manager" : path.resolve(__dirname, '../src/')
+      'async-task-manager' : path.resolve(__dirname, '../src/')
     }
   }
 };
