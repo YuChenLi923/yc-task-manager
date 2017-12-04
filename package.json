@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "test": "mocha-webpack --opts mocha-webpack.opts",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec --timeout 0&& gulp coveralls"
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec --timeout 0 && gulp coveralls"
   },
   "repository": {
     "type": "git",
