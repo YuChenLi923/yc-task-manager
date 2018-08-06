@@ -16,6 +16,7 @@
     "yc"
   ],
   "scripts": {
+    "build": "babel src -d dist",
     "test": "mocha-webpack --opts mocha-webpack.opts",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec --timeout 0 && gulp coveralls"
   },
@@ -26,6 +27,7 @@
   "author": "YuChenLi <liyc_code@163.com>",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-add-module-exports": "^0.2.1",
