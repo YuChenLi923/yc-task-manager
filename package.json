@@ -1,6 +1,6 @@
 {
   "name": "yc-task-manager",
-  "version": "0.1.0-b",
+  "version": "0.1.0",
   "description": "a simple manager to handle some complex tasks",
   "main": "dist/index.js",
   "directories": {
